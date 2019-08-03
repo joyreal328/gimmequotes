@@ -1,0 +1,481 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Text to Speech App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+      
+            @import url('https://fonts.googleapis.com/css?family=Glegoo&display=swap');
+            @import url('https://fonts.googleapis.com/css?family=Berkshire+Swash&display=swap');
+
+
+
+            @media screen and (min-width: 2000px) {
+                body {
+            
+                    
+                    background-image: url('https://source.unsplash.com/ipyxkiJtdYI/2500x1000');
+                    
+                  
+                    }
+
+                }    
+
+            /*regular size screens*/
+    
+            body {
+                font-family: 'Glegoo', serif;
+                text-align: center;
+                margin:0;
+                padding:0;
+                background-image: url('https://source.unsplash.com/ipyxkiJtdYI/1500x1000'); 
+                background-color:#A9D3E3; 
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position-x: center;
+                background-position-y:top;
+                height: 120vh;
+        
+                
+            }
+
+
+            nav {
+                width: 100%;
+                height: 60px;
+                background-color: #055174;
+                padding:5px;
+           
+            }
+
+            .logo {
+                font-family: 'Berkshire Swash', cursive;
+                color: white;
+            }
+    
+    
+            .container {
+                width: 80%;
+                height: 100vh;
+                margin: auto;
+                padding-top: 2%;
+        
+    
+            }
+
+         
+    
+            .card-container {
+                width: 100%;
+                height: 60%;
+                position: relative;
+                margin: auto;
+        
+            }
+
+            .card-body {
+                padding: 5px;
+            }
+    
+            .img-svg {
+                width: 100px;
+                height: 100px;
+                border: 5px solid lightblue;
+                border-radius: 50%;
+                padding: 10px;
+                cursor: pointer;
+                background-color: red;
+    
+            }
+    
+        
+            .img-svg:hover {
+                background-color: #055174;
+                border: 5px solid red;
+
+        
+            }
+
+            
+
+            .refresh-icon {
+                width: 50px;
+                height: 50px;
+                cursor: pointer;
+        
+            }
+
+            .overlay-big {
+
+                width: 90%;
+                height: 21vh;
+                background-color: rgb(41,160,216,0.8);
+                margin: auto;
+                padding-top: 10px;
+                border-radius: 15px;
+                padding: 10px;
+                color: white;
+
+
+            }
+
+            .quotes-speech {
+                font-size:.75em;
+            }
+
+
+            /*for mobile*/
+                @media screen and (max-width: 450px) {
+                .container-mobile {
+          
+                    width: 95%;
+                    height: 120vh;
+                    margin: auto;
+                    padding:5px;
+        
+            
+                }
+
+                .instruction-mob {
+                    font-size:.6em;
+                    
+                }
+
+                .title-instruction-mob {
+
+                    font-size:1em;
+
+                }
+
+                .content-mob {
+
+                    font-size:1em;
+
+                }
+
+                .overlay-big-mob {
+
+                    width: 99%;
+                    height: 15vh;
+                    background-color: rgb(41,160,216,0.8);
+                    margin: auto;
+                    border-radius: 15px;
+                    padding: 5px;
+                    color: white;
+
+
+                }
+
+                .quotes-speech-mob {
+                    font-size:.5em;
+                }
+
+
+            }
+
+
+
+            
+    </style>
+    
+</head>
+<body>
+
+    <!--template-->
+    <nav>
+        <h1 class="logo">Gimme Quotes</h1>
+    </nav>
+        <div class="container container-mobile">
+       
+                <h1 class="title-instruction-mob">Click the red button...</h1>
+                <h3 class="instruction-mob">and say something like: "Random" | "Oprah"  </h3>
+                
+
+
+                <img src="mic.svg" alt="microphone" class="img-svg">
+
+
+                <div class="card-container">
+
+                        <h2 class="content content-mob"></h2>
+
+                        <div class="card-body">
+                            
+                                <h1 class="quotes"></h1>
+
+                        </div>
+
+                     <img src="refresh.svg" alt="refresh" onclick="history.go(0)" class="refresh-icon" >  
+                        
+                </div>
+
+               
+        </div>
+
+
+
+
+
+        <script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+ 
+<script>
+
+
+var sBrowser, sUsrAg = navigator.userAgent;
+
+if (sUsrAg.indexOf("Firefox") > -1) {
+    alert('Sorry, works only with Google Chrome');
+} 
+
+
+var isSafari = window.safari !== undefined;
+if (isSafari) {
+    alert('Sorry, works only with Google Chrome');
+
+} 
+                        
+
+            const btn = document.querySelector('.img-svg');
+            const content = document.querySelector('.content');
+            const quotes = document.querySelector('.quotes');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+ 
+            //hard coded quotes
+
+            var oprah_greetings = [  
+
+                " Be thankful for what you have; you'll end up having more. If you concentrate on what you don't have, you will never, ever have enough. ",
+                " Surround yourself with only people who are going to lift you higher. ",
+                " The biggest adventure you can ever take is to live the life of your dreams ",
+                " Think like a queen. A queen is not afraid to fail. Failure is another stepping stone to greatness. ",
+                " Doing the best at this moment puts you in the best place for the next moment.",
+                "Real integrity is doing the right thing, knowing that nobody's going to know whether you did it or not. ",
+                " The more you praise and celebrate your life, the more there is in life to celebrate. ",
+                " Turn your wounds into wisdom.",
+                " Passion is energy. Feel the power that comes from focusing on what excites you.",
+                "Lots of people want to ride with you in the limo, but what you want is someone who will take the bus with you when the limo breaks down."
+
+            ]
+
+
+
+            //quotes from API
+
+           
+            $.getJSON('https://api.adviceslip.com/advice',function(data) {
+                console.log(data);
+                
+
+
+                var randomGreeting = data.slip.advice;
+
+                random_greetings = [];
+
+                random_greetings.push(randomGreeting);
+                
+                console.log('slip advice:' + " " + random_greetings);
+
+
+            })
+
+
+            
+
+        $.getJSON('https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=19,',function(data) {
+                    console.log(data);
+
+                    function strip_html_tags(item){
+
+                        return item.replace("<p>"," ").replace("</p>"," ");
+
+                        }
+
+
+                    design_greetings = [];
+
+                    var i;
+                         
+
+                    for( var i=0; i<19; i++){
+
+                            design_greetings.push(strip_html_tags(data[i].content));
+
+                            }
+
+                        //for testing only
+                        console.log(design_greetings[5]);
+                 
+
+                    })
+
+
+
+        
+                recognition.lang = 'en-US';
+
+
+
+            //add the listener to the button
+
+                btn.addEventListener('click', () => {
+                                    recognition.start();
+
+                                });
+               
+
+
+                recognition.onstart = function () {
+                    console.log(event);
+                    console.log('voice is activated');
+                    content.innerHTML = 'Speak now...';
+
+
+                }
+
+
+                recognition.onsoundstart = function() {
+                    console.log('Some sound is being received');
+                    content.innerHTML = 'Listening...';
+
+                
+                    $(document).ready(function() {
+                    $(".img-svg").addClass("animated pulse");
+                    $(".content").addClass("animated pulse");
+                
+                    });
+
+                
+                }
+
+    
+               
+                recognition.onsoundend = function() {
+                    console.log('Sound has stopped being received');
+                    //content.innerHTML = 'Sound has stopped being received';
+
+                
+
+                    $(".img-svg").animate({
+                                        
+                                        width: '50px',
+                                        height: '50px',
+                          
+                                    });
+
+                    
+                
+
+                    $(".refresh-icon").animate({
+                                        
+                                        width: '120px',
+                                        height: '120px',
+                                      
+                          
+                                    });
+
+
+
+                                    $(document).ready(function() {
+                    $(".refresh-icon").addClass("animated shake delay-3s");
+                
+                    });
+
+                    
+                    }
+
+                   
+
+            
+                
+                recognition.onspeechend = function() {
+                    console.log('Speech has stopped being detected');
+                  
+                    
+
+                }
+
+                recognition.onresult = function(event) {
+                    console.log(event);
+                    const current = event.resultIndex;
+                    const transcript = event.results[current][0].transcript;
+                    content.textContent = 'You said:' + " " + ' " ' + transcript +  ' " ';
+                    readOutLoud(transcript);
+                   
+                }
+
+
+
+                function readOutLoud(message){
+
+                    const speech = new SpeechSynthesisUtterance();
+
+                    speech.text = "Sorry...I don't know what you are talking about!";
+
+
+                    if( message.includes('Oprah')) {
+                        speech.text = oprah_greetings[Math.floor(Math.random()*oprah_greetings.length)];
+
+                    }
+
+                
+
+                    if( message.includes('Bill Gates')) {
+                        speech.text = bill_greetings[Math.floor(Math.random()*bill_greetings.length)];
+
+                    }
+
+
+                    if( message.includes('random')) {
+                        speech.text = random_greetings
+
+                    }
+
+
+                    if( message.includes('design')) {
+                        speech.text = design_greetings[Math.floor(Math.random()*design_greetings.length)];
+
+                    }
+
+
+
+                    speech.volume = 1;
+                    speech.rate = 1;
+                    speech.pitch = 1;
+
+                    window.speechSynthesis.speak(speech);
+
+                    console.log(speech.text);
+
+
+
+
+                    //quotes.innerHTML = '<h2 class="title">' + speech.text + '</h2>'+ '<br>' + '<button>' + 'Share' + '</button>' ;
+    
+                    quotes.innerHTML = '<div class="overlay-big overlay-big-mob">'+ '<h3 class="quotes-speech quotes-speech-mob">' + '"' + " " + speech.text +  '"' + '</h3>'+  '</div>' ;
+
+
+                    $(document).ready(function() {
+                    $(".quotes").addClass("animated slideInUp");
+                
+                    });
+
+
+
+            
+                }
+                        
+            
+</script>
+
+
+    
+</body>
+</html>
